@@ -24,8 +24,6 @@ const createProductItemElement = ({ id, title, thumbnail }) => {
   return section;
 };
 
-const getIdFromProductItem = (product) => product.querySelector('span.id').innerText;
-
 const createCartItemElement = ({ id, title, price }) => {
   const li = document.createElement('li');
   li.className = 'cart__item';
@@ -34,14 +32,30 @@ const createCartItemElement = ({ id, title, price }) => {
   return li;
 };
 
-const generateItem = async () => {
+const generateItem = async (item) => {
   const list = document.querySelector('.items');
-  const request = await fetchProducts('computador');
+  const request = await fetchProducts(item);
   const { results } = request;
   results.forEach((product) => {
     list.appendChild(createProductItemElement(product));
   });
 };
-generateItem();
 
-window.onload = () => { };
+const addCart = async ({ target }) => {
+  const product = target.parentNode.firstChild;
+  const id = product.innerText;
+  const request = await fetchItem(id);
+  cartList.appendChild(createCartItemElement(request));
+  saveCartItems(cartList.innerHTML);
+  finalPrice(request);
+};
+
+const addBtnEL = async () => {
+  await generateItem('computador');
+  const addBtn = document.querySelectorAll('.item__add');
+  addBtn.forEach((btn) => btn.addEventListener('click', addCart));
+};
+
+window.onload = () => { 
+  addBtnEL();
+};
