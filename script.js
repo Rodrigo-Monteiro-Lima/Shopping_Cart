@@ -28,15 +28,28 @@ const createProductItemElement = ({ id, title, thumbnail, price }) => {
   section.appendChild(p);
   section.appendChild(createCustomElement('button', 'item__add', 'Adicionar ao carrinho!'));
   return section;
+
 };
 
+const addLoading = () => {
+  const section = document.querySelector('.items');
+  const div = document.createElement('div');
+  div.classList.add('loading');
+  div.innerHTML = 'Carregando';
+  section.appendChild(div);
+};
+
+const rmvLoading = () => document.querySelector('.loading').remove();
+
 const generateItem = async (item) => {
+  addLoading();
   const list = document.querySelector('.items');
   const request = await fetchProducts(item);
   const { results } = request;
   results.forEach((product) => {
     list.appendChild(createProductItemElement(product));
   });
+  rmvLoading();
 };
 
 const cartItemClickListener = ({ target }) => {
@@ -53,7 +66,13 @@ const cartItemClickListener = ({ target }) => {
 const createCartItemElement = ({ id, title, price, thumbnail }) => {
   const li = document.createElement('li');
   li.className = 'cart__item';
+  // const img = document.createElement('img');
+  // img.setAttribute('src', thumbnail);
+  // li.appendChild(img);
+  // li.innerHTML = img;
+  //li.appendChild(createProductImageElement(thumbnail));
   li.innerText = `ID: ${id} | TITLE: ${title} | PRICE: $${price}`;
+  // li.innerText = `${title} \n\n PRICE: $${price}`;
   li.addEventListener('click', cartItemClickListener);
   return li;
 };
@@ -96,7 +115,17 @@ const loadCart = () => {
   });
 };
 
+const clearCart = () => {
+  const clearBtn = document.querySelector('.empty-cart');
+  clearBtn.addEventListener('click', () => {
+    cartList.innerHTML = '';
+    localStorage.clear();
+    totalPrice.innerText = getPrice();
+  });
+};
+
 window.onload = () => {
   addBtnEL();
   loadCart();
+  clearCart();
  };
