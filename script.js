@@ -28,6 +28,7 @@ const createProductItemElement = ({ id, title, thumbnail }) => {
 
 const cartItemClickListener = ({ target }) => {
   cartList.removeChild(target);
+  saveCartItems(cartList.innerHTML);
 };
 
 const createCartItemElement = ({ id, title, price }) => {
@@ -52,6 +53,7 @@ const addCart = async ({ target }) => {
   const id = product.innerText;
   const request = await fetchItem(id);
   cartList.appendChild(createCartItemElement(request));
+  saveCartItems(cartList.innerHTML);
 };
 
 const addBtnEL = async () => {
@@ -60,6 +62,15 @@ const addBtnEL = async () => {
   addBtn.forEach((btn) => btn.addEventListener('click', addCart));
 };
 
+const loadCart = () => {
+  cartList.innerHTML = getSavedCartItems();
+  const lis = cartList.childNodes;
+  lis.forEach((li) => {
+    li.addEventListener('click', cartItemClickListener);
+  });
+};
+
 window.onload = () => { 
   addBtnEL();
+  loadCart();
 };
