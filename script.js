@@ -28,7 +28,6 @@ const createProductItemElement = ({ id, title, thumbnail, price }) => {
   section.appendChild(p);
   section.appendChild(createCustomElement('button', 'item__add', 'Adicionar ao carrinho!'));
   return section;
-
 };
 
 const addLoading = () => {
@@ -70,7 +69,7 @@ const createCartItemElement = ({ id, title, price, thumbnail }) => {
   // img.setAttribute('src', thumbnail);
   // li.appendChild(img);
   // li.innerHTML = img;
-  //li.appendChild(createProductImageElement(thumbnail));
+  // li.appendChild(createProductImageElement(thumbnail));
   li.innerText = `ID: ${id} | TITLE: ${title} | PRICE: $${price}`;
   // li.innerText = `${title} \n\n PRICE: $${price}`;
   li.addEventListener('click', cartItemClickListener);
