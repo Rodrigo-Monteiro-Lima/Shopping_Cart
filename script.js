@@ -46,8 +46,6 @@ const addCart = async ({ target }) => {
   const id = product.innerText;
   const request = await fetchItem(id);
   cartList.appendChild(createCartItemElement(request));
-  saveCartItems(cartList.innerHTML);
-  finalPrice(request);
 };
 
 const addBtnEL = async () => {
