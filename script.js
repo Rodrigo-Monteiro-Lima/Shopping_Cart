@@ -1,3 +1,5 @@
+const cartList = document.querySelector('.cart__items');
+
 const createProductImageElement = (imageSource) => {
   const img = document.createElement('img');
   img.className = 'item__image';
@@ -22,6 +24,10 @@ const createProductItemElement = ({ id, title, thumbnail }) => {
   section.appendChild(createCustomElement('button', 'item__add', 'Adicionar ao carrinho!'));
 
   return section;
+};
+
+const cartItemClickListener = ({ target }) => {
+  cartList.removeChild(target);
 };
 
 const createCartItemElement = ({ id, title, price }) => {
