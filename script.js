@@ -43,11 +43,11 @@ const createProductItemElement = ({ id, title, thumbnail, price }) => {
 // };
 
 const addLoading = () => {
-  const section = document.querySelector('.items');
+  const list = document.querySelector('.items');
   const div = document.createElement('div');
   div.classList.add('loading');
   div.innerHTML = 'Carregando';
-  section.appendChild(div);
+  list.appendChild(div);
   // const arr = Array(50);
   // const list = document.querySelector('.items');
   // arr.forEach((_) => {
