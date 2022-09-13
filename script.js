@@ -23,12 +23,24 @@ const createProductItemElement = ({ id, title, thumbnail, price }) => {
   section.appendChild(createProductImageElement(thumbnail));
   section.appendChild(createCustomElement('span', 'item__title', title));
   const p = document.createElement('p');
+  const span = document.createElement('span');
+  span.className = 'item_currency';
+  span.innerText = 'R$';
   p.className = 'item_price';
-  p.innerText = `$ ${price}`;
-  section.appendChild(p);
+  p.innerText = `${price}`;
+  span.appendChild(p);
+  section.appendChild(span);
   section.appendChild(createCustomElement('button', 'item__add', 'Adicionar ao carrinho!'));
   return section;
 };
+
+// const createLoadElement = () => {
+//   const section = document.createElement('section');
+//   section.className = 'loading';
+//   section.innerHTML = 'Carregando';
+//   console.log(section);
+//   return section;
+// };
 
 const addLoading = () => {
   const section = document.querySelector('.items');
@@ -36,9 +48,18 @@ const addLoading = () => {
   div.classList.add('loading');
   div.innerHTML = 'Carregando';
   section.appendChild(div);
+  // const arr = Array(50);
+  // const list = document.querySelector('.items');
+  // arr.forEach((_) => {
+  //   list.appendChild(createLoadElement());
+  // });
 };
 
 const rmvLoading = () => document.querySelector('.loading').remove();
+//   const load = document.querySelectorAll('.loading');
+//   load.forEach((item) => {
+//     load.remove();
+//   });
 
 const generateItem = async (item) => {
   addLoading();
@@ -52,27 +73,35 @@ const generateItem = async (item) => {
 };
 
 const cartItemClickListener = ({ target }) => {
-  cartList.removeChild(target);
-  const price = target.innerText.split('$')[1];
+  cartList.removeChild(target.parentNode);
+  const price = +target.previousSibling.lastChild.innerText.split('$')[1];
+  console.log(price);
   let value = +totalPrice.innerText;
-  value -= Number(price);
+  value -= price;
   const roundValue = Math.round(value * 100) / 100;
   totalPrice.innerHTML = roundValue;
   saveCartItems(cartList.innerHTML);
   localStorage.setItem(priceKey, totalPrice.innerText);
 };
 
-const createCartItemElement = ({ id, title, price, thumbnail }) => {
+const createCartItemElement = ({ title, price, thumbnail }) => {
   const li = document.createElement('li');
+  const img = document.createElement('img');
+  const div = document.createElement('div');
+  const span = document.createElement('span');
+  const p = document.createElement('p');
+  const del = document.createElement('div');
+  del.innerText = '✖';
   li.className = 'cart__item';
-  // const img = document.createElement('img');
-  // img.setAttribute('src', thumbnail);
-  // li.appendChild(img);
-  // li.innerHTML = img;
-  // li.appendChild(createProductImageElement(thumbnail));
-  li.innerText = `ID: ${id} | TITLE: ${title} | PRICE: $${price}`;
-  // li.innerText = `${title} \n\n PRICE: $${price}`;
-  li.addEventListener('click', cartItemClickListener);
+  img.src = thumbnail;
+  p.innerText = `${title}`;
+  span.innerText = `R$ ${price}`;
+  div.appendChild(p);
+  div.appendChild(span);
+  li.appendChild(img);
+  li.appendChild(div);
+  li.appendChild(del);
+  del.addEventListener('click', cartItemClickListener);
   return li;
 };
 
@@ -93,10 +122,29 @@ const addCart = async ({ target }) => {
   finalPrice(request);
 };
 
+const dropDown = () => {
+  const list = document.querySelector('.cart');
+  const cart = document.querySelector('.cart__title');
+  const section = document.querySelector('.items');
+  const item = document.querySelectorAll('.item');
+  cart.addEventListener('click', () => {
+  if (list.style.display === 'flex') {
+    list.style.display = 'none';
+    section.style.width = '100%';
+    item.forEach((i) => { i.style.marginRight = '39px'; });
+  } else {
+    list.style.display = 'flex';
+    section.style.width = '73%';
+    item.forEach((i) => { i.style.marginRight = '25px'; });
+  }
+});
+};
+
 const addBtnEL = async () => {
   await generateItem('computador');
   const addBtn = document.querySelectorAll('.item__add');
   addBtn.forEach((btn) => btn.addEventListener('click', addCart));
+  dropDown();
 };
 
 const getPrice = () => {
@@ -127,4 +175,5 @@ window.onload = () => {
   addBtnEL();
   loadCart();
   clearCart();
+  // dropDown();
  };
