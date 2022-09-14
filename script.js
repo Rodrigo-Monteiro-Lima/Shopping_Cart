@@ -141,7 +141,6 @@ const dropDown = () => {
   const cart = document.querySelector('.cart__title');
   const section = document.querySelector('.items');
   const item = document.querySelectorAll('.item');
-  list.style.display = 'flex';
   cart.addEventListener('click', () => {
   if (list.style.display === 'flex') {
     list.style.display = 'none';
