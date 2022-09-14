@@ -4,12 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Document</title>
+    <title>Shopping Cart</title>
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous"> -->
     <link rel="stylesheet" href="style.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
     <script src="./helpers/fetchItem.js" defer></script>
     <script src="./helpers/fetchProducts.js" defer></script>
     <script src="./helpers/saveCartItems.js" defer></script>
@@ -22,15 +24,19 @@
         <img src="logo carrinho de compras.png" alt="logo shopping cart">
       </div>
       <div class="container-cartTitle">
-        <span class="cart__title"><i class="material-icons" style="font-size:45px;color:white">shopping_cart</i>Meu carrinho</span>
+        <span class="cart__title">
+          <span class="p1 fa-stack fa-2x has-badge" data-count="0">
+            <i class="p3 fa fa-shopping-cart fa-stack-1x xfa-inverse material-icons"></i>
+          </span>
+          Meu carrinho</span>
       </div>
     </header>
-    <section class="container">
+    <section class="main-container">
       <section class="items"></section>
       <section class="cart">
         <ol class="cart__items"></ol>
-        <div class="price">Subtotal: R$<p class="total-price">0</p></div>
-        <button class="empty-cart">Esvaziar carrinho</button>
+        <div class="prices">Subtotal: R$<p class="total-price">0</p></div>
+        <button class="empty_cart">Esvaziar carrinho</button>
       </section>
     </section>
   </body>
