@@ -3,6 +3,11 @@ const totalPrice = document.querySelector('.total-price');
 const priceKey = 'total-price';
 const spanCount = document.querySelector('.p1');
 const data = 'data-count';
+const list = document.querySelector('.cart');
+const cart = document.querySelector('.container-cartTitle');
+const section = document.querySelector('.items');
+const header = document.querySelector('.container-title');
+const title = document.querySelector('.title');
 
 const createProductImageElement = (imageSource) => {
   const img = document.createElement('img');
@@ -18,6 +23,24 @@ const createCustomElement = (element, className, innerText) => {
   return e;
 };
 
+const newValue = (price) => {
+  const str = String(price);
+  const arr = str.split('.');
+  if (str.includes('.')) {
+    if (arr[0].length > 3) {
+      const a = arr[0].slice(0, 1);
+      const b = arr[0].slice(1);
+      const number = `${a}.${b},${arr[1]}`;
+      return number;
+    } return `${arr[0]},${arr[1]}`;
+  } if (arr[0].length > 3) {
+      const a = arr[0].slice(0, 1);
+      const b = arr[0].slice(1);
+      const number = `${a}.${b}`;
+      return number;
+    } return arr[0];
+  };
+
 const createProductItemElement = ({ id, title, thumbnail, price }) => {
   const section = document.createElement('section');
   section.className = 'item';
@@ -29,7 +52,7 @@ const createProductItemElement = ({ id, title, thumbnail, price }) => {
   span.className = 'item_currency';
   span.innerText = 'R$';
   p.className = 'item_price';
-  p.innerText = `${price}`;
+  p.innerText = `${newValue(price)}`;
   span.appendChild(p);
   section.appendChild(span);
   section.appendChild(createCustomElement('button', 'item__add', 'Adicionar ao carrinho!'));
@@ -40,10 +63,8 @@ const createLoadElement = () => {
   const section = document.createElement('section');
   section.className = 'loading';
   section.innerHTML = `
-  <div class="bootstrap-iso">
-    <div class="spinner-border" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
+  <div>
+      <span>Loading...</span>
   </div>`;
   return section;
 };
@@ -87,8 +108,8 @@ const cartCount = (signal) => {
 const cartItemClickListener = ({ target }) => {
   cartList.removeChild(target.parentNode);
   cartCount('-');
-  const price = +target.previousSibling.lastChild.innerText.split('$')[1];
-  console.log(price);
+  const price = +target.previousSibling.lastChild.innerText.split('$')[1]
+  .split('.').join('').split(',').join('.');
   let value = +totalPrice.innerText;
   value -= price;
   const roundValue = Math.round(value * 100) / 100;
@@ -108,7 +129,7 @@ const createCartItemElement = ({ title, price, thumbnail }) => {
   li.className = 'cart__item';
   img.src = thumbnail;
   p.innerText = `${title}`;
-  span.innerText = `R$ ${price}`;
+  span.innerText = `R$ ${newValue(price)}`;
   div.appendChild(p);
   div.appendChild(span);
   li.appendChild(img);
@@ -137,19 +158,24 @@ const addCart = async ({ target }) => {
 };
 
 const dropDown = () => {
-  const list = document.querySelector('.cart');
-  const cart = document.querySelector('.cart__title');
-  const section = document.querySelector('.items');
   const item = document.querySelectorAll('.item');
   cart.addEventListener('click', () => {
-  if (list.style.display === 'flex') {
-    list.style.display = 'none';
+  if (!list.className.includes('active')) {
+    list.classList.add('active');
+    title.classList.add('name');
     section.style.width = '100%';
-    item.forEach((e) => { e.style.marginRight = '39px'; });
+    cart.style.width = '5%';
+    header.style.width = '95%';
+    // e.style.width = '21.8%';
+  item.forEach((e) => { e.classList.add('move'); });
   } else {
-    list.style.display = 'flex';
+    list.classList.remove('active');
+    title.classList.remove('name');
     section.style.width = '73%';
-    item.forEach((e) => { e.style.marginRight = '25px'; });
+    cart.style.width = '27%';
+    header.style.width = '73%';
+    // e.style.width = '30.1%';
+    item.forEach((e) => { e.classList.remove('move'); });
   }
 });
 };
@@ -186,10 +212,30 @@ const clearCart = () => {
   });
 };
 
+const goHome = () => {
+  const home = document.querySelector('.home');
+  const start = document.querySelector('.header');
+  home.addEventListener('click', () => {
+    start.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+};
+
+window.addEventListener('scroll', () => {
+const element = document.querySelector('header');
+const position = element.getBoundingClientRect();
+const home = document.querySelector('.home');
+
+if (position.top < window.innerHeight && position.bottom >= 0) {
+  home.style.display = 'none';
+} else {
+  home.style.display = 'block';
+}
+});
+
 window.onload = () => {
   addBtnEL();
   loadCart();
   clearCart();
   spanCount.setAttribute(data, getPrice(data));
-  // dropDown();
+  goHome();
  };
