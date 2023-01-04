@@ -7,7 +7,8 @@ const list = document.querySelector('.cart');
 const cart = document.querySelector('.container-cartTitle');
 const section = document.querySelector('.items');
 const header = document.querySelector('.container-title');
-const title = document.querySelector('.title');
+const cartName = document.querySelector('.title');
+const search = document.querySelector('.search');
 
 const createProductImageElement = (imageSource) => {
   const img = document.createElement('img');
@@ -23,56 +24,39 @@ const createCustomElement = (element, className, innerText) => {
   return e;
 };
 
-const newValue = (price) => {
-  const str = String(price);
-  const arr = str.split('.');
-  if (str.includes('.')) {
-    if (arr[0].length > 3) {
-      const a = arr[0].slice(0, 1);
-      const b = arr[0].slice(1);
-      const number = `${a}.${b},${arr[1]}`;
-      return number;
-    } return `${arr[0]},${arr[1]}`;
-  } if (arr[0].length > 3) {
-      const a = arr[0].slice(0, 1);
-      const b = arr[0].slice(1);
-      const number = `${a}.${b}`;
-      return number;
-    } return arr[0];
-  };
-
 const createProductItemElement = ({ id, title, thumbnail, price }) => {
-  const section = document.createElement('section');
-  section.className = 'item';
-  section.appendChild(createCustomElement('span', 'item_id', id));
-  section.appendChild(createProductImageElement(thumbnail));
-  section.appendChild(createCustomElement('span', 'item__title', title));
+  const sectionElement = document.createElement('section');
+  sectionElement.className = 'item';
+  sectionElement.appendChild(createCustomElement('span', 'item_id', id));
+  sectionElement.appendChild(createProductImageElement(thumbnail));
+  sectionElement.appendChild(createCustomElement('span', 'item__title', title));
   const p = document.createElement('p');
   const span = document.createElement('span');
   span.className = 'item_currency';
   span.innerText = 'R$';
   p.className = 'item_price';
-  p.innerText = `${newValue(price)}`;
+  p.innerText = `${price.toLocaleString('pt-br')}`;
   span.appendChild(p);
-  section.appendChild(span);
-  section.appendChild(createCustomElement('button', 'item__add', 'Adicionar ao carrinho!'));
-  return section;
+  sectionElement.appendChild(span);
+  const btn = (createCustomElement('button', 'item__add', 'Adicionar ao carrinho!'));
+  btn.addEventListener('click', addCart);
+  sectionElement.appendChild(btn);
+  return sectionElement;
 };
 
 const createLoadElement = () => {
-  const section = document.createElement('section');
-  section.className = 'loading';
-  section.innerHTML = `
+  const sectionElement = document.createElement('section');
+  sectionElement.className = 'loading';
+  sectionElement.innerHTML = `
   <div>
       <span>Loading...</span>
   </div>`;
-  return section;
+  return sectionElement;
 };
 
 const addLoading = () => {
-  const list = document.querySelector('.items');
   for (let index = 0; index < 50; index += 1) {
-    list.appendChild(createLoadElement());    
+    section.appendChild(createLoadElement());    
   }
 };
 
@@ -85,11 +69,10 @@ const rmvLoading = () => {
 
 const generateItem = async (item) => {
   addLoading();
-  const list = document.querySelector('.items');
   const request = await fetchProducts(item);
   const { results } = request;
   results.forEach((product) => {
-    list.appendChild(createProductItemElement(product));
+    section.appendChild(createProductItemElement(product));
   });
   rmvLoading();
 };
@@ -110,10 +93,10 @@ const cartItemClickListener = ({ target }) => {
   cartCount('-');
   const price = +target.previousSibling.lastChild.innerText.split('$')[1]
   .split('.').join('').split(',').join('.');
-  let value = +totalPrice.innerText;
+  let value = +totalPrice.innerText.split('.').join('').split(',').join('.');
   value -= price;
   const roundValue = Math.round(value * 100) / 100;
-  totalPrice.innerHTML = roundValue;
+  totalPrice.innerHTML = roundValue.toLocaleString('pt-br');
   saveCartItems(cartList.innerHTML);
   localStorage.setItem(priceKey, totalPrice.innerText);
 };
@@ -129,7 +112,7 @@ const createCartItemElement = ({ title, price, thumbnail }) => {
   li.className = 'cart__item';
   img.src = thumbnail;
   p.innerText = `${title}`;
-  span.innerText = `R$ ${newValue(price)}`;
+  span.innerText = `R$ ${price.toLocaleString('pt-br')}`;
   div.appendChild(p);
   div.appendChild(span);
   li.appendChild(img);
@@ -140,10 +123,12 @@ const createCartItemElement = ({ title, price, thumbnail }) => {
 };
 
 const finalPrice = async ({ price }) => {
-  let value = +totalPrice.innerText;
+  let value = +totalPrice.innerText.split('.').join('').split(',').join('.');
+  console.log(value);
+  console.log(price);
   value += price;
   const roundValue = Math.round(value * 100) / 100;
-  totalPrice.innerHTML = roundValue;
+  totalPrice.innerHTML = roundValue.toLocaleString('pt-br');
   localStorage.setItem(priceKey, totalPrice.innerText);
 };
 
@@ -162,29 +147,47 @@ const dropDown = () => {
   cart.addEventListener('click', () => {
   if (!list.className.includes('active')) {
     list.classList.add('active');
-    title.classList.add('name');
+    cartName.classList.add('name');
     section.style.width = '100%';
+    search.style.width = '100%';
     cart.style.width = '5%';
     header.style.width = '95%';
-    // e.style.width = '21.8%';
   item.forEach((e) => { e.classList.add('move'); });
   } else {
     list.classList.remove('active');
-    title.classList.remove('name');
+    cartName.classList.remove('name');
     section.style.width = '73%';
+    search.style.width = '73%';
     cart.style.width = '27%';
     header.style.width = '73%';
-    // e.style.width = '30.1%';
     item.forEach((e) => { e.classList.remove('move'); });
   }
 });
 };
 
-const addBtnEL = async () => {
-  await generateItem('computador');
-  const addBtn = document.querySelectorAll('.item__add');
-  addBtn.forEach((btn) => btn.addEventListener('click', addCart));
-  dropDown();
+const searchClick = () => {
+  const btnSearch = document.querySelector('.button-search');
+  const input = document.querySelector('.input');
+  btnSearch.addEventListener('click', async () => {
+    const inputValue = document.querySelector('.input').value.toLowerCase();
+    if (inputValue.length !== 0) {
+      section.innerHTML = '';
+      await generateItem(inputValue);
+      input.value = '';
+    }
+  });
+};
+
+const searchEnter = () => {
+  const input = document.querySelector('.input');
+  input.addEventListener('keypress', async (event) => {
+    const inputValue = input.value.toLowerCase();
+      if (event.key === 'Enter' && inputValue.length !== 0) {
+        section.innerHTML = '';
+        await generateItem(inputValue);
+        input.value = '';
+      }
+  });
 };
 
 const getPrice = (key) => {
@@ -232,8 +235,11 @@ if (position.top < window.innerHeight && position.bottom >= 0) {
 }
 });
 
-window.onload = () => {
-  addBtnEL();
+window.onload = async () => {
+  await generateItem('computador');
+  dropDown();
+  searchEnter();
+  searchClick();
   loadCart();
   clearCart();
   spanCount.setAttribute(data, getPrice(data));
